@@ -42,9 +42,11 @@ class SimpleTokenizer:
         """
         if self.lowercase:
             text = text.lower()
-
-        # Remove non-alphanumeric characters and split
-        tokens = re.findall(r"\b[a-z]+\b", text)
+            # Match only lowercase letters when lowercase is True
+            tokens = re.findall(r"\b[a-z]+\b", text)
+        else:
+            # Match both uppercase and lowercase letters
+            tokens = re.findall(r"\b[a-zA-Z]+\b", text)
 
         # Filter by minimum length
         tokens = [t for t in tokens if len(t) >= self.min_length]

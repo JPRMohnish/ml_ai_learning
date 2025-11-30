@@ -28,7 +28,7 @@ class NeuralNetwork:
         n_iterations: Number of training epochs
     """
 
-    def __init__(self, hidden_size=10, learning_rate=0.01, n_iterations=1000):
+    def __init__(self, hidden_size=10, learning_rate=0.01, n_iterations=1000, random_state=None):
         """
         Initialize the neural network.
 
@@ -36,10 +36,12 @@ class NeuralNetwork:
             hidden_size: Number of neurons in the hidden layer
             learning_rate: Step size for gradient descent updates
             n_iterations: Number of training epochs
+            random_state: Optional random seed for reproducibility
         """
         self.hidden_size = hidden_size
         self.learning_rate = learning_rate
         self.n_iterations = n_iterations
+        self.random_state = random_state
         self.W1 = None
         self.b1 = None
         self.W2 = None
@@ -64,14 +66,16 @@ class NeuralNetwork:
         """Derivative of ReLU function."""
         return (z > 0).astype(float)
 
-    def _initialize_weights(self, n_features):
+    def _initialize_weights(self, n_features, random_state=None):
         """
         Initialize weights using Xavier initialization.
 
         Args:
             n_features: Number of input features
+            random_state: Optional random seed for reproducibility
         """
-        np.random.seed(42)
+        if random_state is not None:
+            np.random.seed(random_state)
         self.W1 = np.random.randn(n_features, self.hidden_size) * np.sqrt(
             2.0 / n_features
         )
@@ -159,7 +163,7 @@ class NeuralNetwork:
             self: The trained model instance
         """
         n_features = X.shape[1]
-        self._initialize_weights(n_features)
+        self._initialize_weights(n_features, self.random_state)
 
         for _ in range(self.n_iterations):
             # Forward pass
@@ -231,7 +235,7 @@ def demo():
     y = np.array([0, 1, 1, 0])
 
     # Train model
-    model = NeuralNetwork(hidden_size=4, learning_rate=0.5, n_iterations=5000)
+    model = NeuralNetwork(hidden_size=4, learning_rate=0.5, n_iterations=5000, random_state=42)
     model.fit(X, y)
 
     # Evaluate
